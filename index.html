@@ -1,0 +1,823 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hunter · O caçador de XMLs fiscais da sua rede</title>
+<meta name="description" content="O Hunter coleta sozinho as NFC-e e NF-e de cada loja da sua rede, guarda tudo com segurança e deixa o mês pronto para você e seu contador.">
+<meta name="theme-color" content="#EFE6D7">
+<link rel="icon" href="assets/hunter.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="preload" href="assets/wolf-poster.jpg" as="image">
+<script>
+document.documentElement.classList.add('js');
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+scrollTo(0, 0);
+addEventListener('pageshow', () => scrollTo(0, 0));
+</script>
+<style>
+:root{
+  --paper:#EFE6D7; --card:#F8F2E7; --sand:#E5DAC8;
+  --ink:#0E1D21; --deep:#122E34; --petrol:#224347; --slate:#677E8A; --mist:#ABAFB5;
+  --glow:#CFEBFF; --mark:#A9D8F7;
+  --line:rgba(14,29,33,.14); --line-2:rgba(14,29,33,.08); --line-d:rgba(239,230,215,.14);
+  --muted:rgba(14,29,33,.66); --muted-d:rgba(239,230,215,.66);
+  --serif:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --ease:cubic-bezier(.22,.7,.2,1);
+  --wrap:1200px; --gut:clamp(16px,4vw,40px); --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{-webkit-text-size-adjust:100%;scroll-padding-top:90px}
+body{background:var(--paper);color:var(--ink);font:400 16px/1.55 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:clip}
+img,video,svg{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+ul,ol{list-style:none}
+::selection{background:var(--ink);color:var(--paper)}
+:focus-visible{outline:2px solid var(--petrol);outline-offset:3px;border-radius:6px}
+.wrap{max-width:var(--wrap);margin:0 auto;padding:0 var(--gut)}
+.mono{font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase}
+em{font-style:normal}
+
+/* dotted paper pattern, used as decoration */
+.dots{background-image:radial-gradient(rgba(14,29,33,.22) 1px,transparent 1.2px);background-size:9px 9px}
+
+/* ---------- Buttons ---------- */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;height:46px;padding:0 22px;border-radius:999px;font-weight:500;font-size:14.5px;white-space:nowrap;border:1px solid var(--ink);transition:background .25s var(--ease),color .25s var(--ease),transform .25s var(--ease),border-color .25s}
+.btn .arr{transition:transform .25s var(--ease)}
+.btn:hover .arr{transform:translateX(4px)}
+.btn:active{transform:scale(.97)}
+.btn-ink{background:var(--ink);color:var(--paper)}
+.btn-ink:hover{background:var(--petrol);border-color:var(--petrol)}
+.btn-line{background:var(--card)}
+.btn-line:hover{background:var(--ink);color:var(--paper)}
+.btn-glow{background:var(--glow);color:var(--ink);border-color:var(--glow)}
+.btn-glow:hover{background:#fff;border-color:#fff}
+.btn-sm{height:38px;padding:0 16px;font-size:13.5px}
+
+/* ---------- Nav ---------- */
+.nav{position:fixed;inset:0 0 auto 0;z-index:50;padding:14px var(--gut) 0;pointer-events:none}
+.nav-in{pointer-events:auto;max-width:var(--wrap);margin:0 auto;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:8px 8px 8px 14px;border-radius:999px;border:1px solid transparent;transition:background .3s,border-color .3s,box-shadow .3s}
+.nav.stuck .nav-in{background:rgba(248,242,231,.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:var(--line);box-shadow:0 8px 30px -18px rgba(14,29,33,.35)}
+.brand{display:flex;align-items:center;gap:10px;font-weight:600;font-size:16px;letter-spacing:-.01em}
+.brand img{width:30px;height:30px;border-radius:8px}
+.brand small{display:block;font:400 10px/1 var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.links{display:flex;gap:4px}
+.links a{font-family:var(--mono);font-size:11.5px;letter-spacing:.07em;text-transform:uppercase;padding:9px 12px;border-radius:999px;color:var(--muted);transition:color .2s,background .2s}
+.links a:hover{color:var(--ink);background:rgba(14,29,33,.07)}
+.nav-r{display:flex;align-items:center;gap:8px}
+.menu-btn{display:none;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);position:relative;background:var(--card)}
+.menu-btn i,.menu-btn i::after{position:absolute;left:11px;right:11px;height:1.5px;background:var(--ink);content:"";transition:transform .25s var(--ease)}
+.menu-btn i{top:15px}.menu-btn i::after{left:0;right:0;top:6px}
+.nav.open .menu-btn i{transform:translateY(3px) rotate(45deg)}
+.nav.open .menu-btn i::after{transform:translateY(-6px) rotate(-90deg)}
+
+/* ---------- Hero ---------- */
+.hero{position:relative;height:260vh}
+.stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;isolation:isolate}
+.stage::after{content:"";position:absolute;inset:0;z-index:4;pointer-events:none;opacity:.2;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .2 0 0 0 0 .25 0 0 0 0 .28 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='220' height='220' filter='url(%23n)'/%3E%3C/svg%3E")}
+.side-dots{position:absolute;top:22%;bottom:10%;width:min(19vw,260px);z-index:0;opacity:.55;-webkit-mask-image:linear-gradient(#000,transparent);mask-image:linear-gradient(#000,transparent)}
+.side-dots.l{left:var(--gut)}.side-dots.r{right:var(--gut)}
+.wolf{position:absolute;left:50%;bottom:-7vh;z-index:1;width:min(112vh,1500px,100vw);aspect-ratio:1920/1102;transform:translateX(-50%) scale(var(--zoom,1));transform-origin:50% 100%;will-change:transform;
+  -webkit-mask-image:linear-gradient(to right,transparent,#000 13%,#000 87%,transparent),linear-gradient(to bottom,transparent,#000 14%);-webkit-mask-composite:source-in;
+  mask-image:linear-gradient(to right,transparent,#000 13%,#000 87%,transparent),linear-gradient(to bottom,transparent,#000 14%);mask-composite:intersect}
+.wolf video{width:100%;height:100%;object-fit:cover}
+.corner{position:absolute;width:13px;height:13px;border:solid var(--ink);opacity:.45;z-index:3}
+.corner.tl{left:var(--gut);top:86px;border-width:1px 0 0 1px}.corner.tr{right:var(--gut);top:86px;border-width:1px 1px 0 0}
+.corner.bl{left:var(--gut);bottom:22px;border-width:0 0 1px 1px}.corner.br{right:var(--gut);bottom:22px;border-width:0 1px 1px 0}
+
+.hero-copy,.hero-end{position:absolute;inset:0;z-index:3;padding:clamp(92px,12.5vh,150px) var(--gut) 0;text-align:center}
+.hero-copy{opacity:var(--copy,1);transform:translateY(calc((1 - var(--copy,1)) * -28px))}
+.eyebrow{display:inline-flex;align-items:center;gap:9px;padding:7px 13px;border:1px solid var(--line);border-radius:999px;background:rgba(248,242,231,.7)}
+.eyebrow i{width:7px;height:7px;border-radius:50%;background:var(--petrol);box-shadow:0 0 0 4px rgba(34,67,71,.16);animation:blip 2.4s ease-in-out infinite}
+@keyframes blip{50%{box-shadow:0 0 0 7px rgba(34,67,71,0)}}
+.h1{font:600 min(7.2vw,11.4vh)/.93 var(--serif);letter-spacing:-.035em;margin-top:clamp(14px,2.2vh,26px)}
+.h1 em,.h2 em{color:var(--petrol)}
+.hero-sub{max-width:520px;margin:clamp(14px,2.2vh,24px) auto 0;font-size:clamp(14.5px,1.7vh,16.5px);color:var(--muted);text-wrap:balance}
+.hero-ctas{display:flex;gap:10px;justify-content:center;margin-top:clamp(16px,2.4vh,26px);position:relative;z-index:2}
+.hero-note{position:absolute;left:var(--gut);bottom:46px;z-index:3;max-width:210px;text-align:left;color:var(--muted);line-height:1.7;opacity:var(--copy,1)}
+.hero-note b{display:block;width:26px;height:4px;background:var(--mark);margin-bottom:10px}
+.scroll-cue{position:absolute;right:var(--gut);bottom:46px;z-index:3;display:flex;align-items:center;gap:10px;color:var(--muted);opacity:var(--copy,1)}
+.scroll-cue i{width:1px;height:34px;background:linear-gradient(var(--ink),transparent);animation:cue 1.8s var(--ease) infinite;transform-origin:top}
+@keyframes cue{0%{transform:scaleY(0)}60%{transform:scaleY(1)}100%{transform:scaleY(1);opacity:0}}
+
+.hud{position:absolute;z-index:3;padding:11px 14px 12px;background:rgba(248,242,231,.86);border:1px solid var(--line);border-radius:12px;-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);opacity:var(--o,0);transform:translateY(calc((1 - var(--o,0)) * 14px));box-shadow:0 14px 34px -22px rgba(14,29,33,.5)}
+.hud::before{content:"";display:block;width:22px;height:4px;background:var(--mark);margin-bottom:9px}
+.hud b{display:block;font:500 15px/1.2 var(--sans);letter-spacing:-.01em}
+.hud span{display:block;font:400 10.5px/1.4 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted);margin-top:3px}
+.hud.a{left:max(var(--gut),calc(50% - 560px));top:56%;--o:var(--h1,0)}
+.hud.b{right:max(var(--gut),calc(50% - 590px));top:47%;--o:var(--h2,0)}
+.hud.c{right:max(var(--gut),calc(50% - 520px));top:72%;--o:var(--h3,0)}
+
+.hero-end{opacity:var(--end,0);transform:translateY(calc((1 - var(--end,0)) * 22px));pointer-events:none}
+.hero-end h2{font:600 min(7.2vw,11.4vh)/.93 var(--serif);letter-spacing:-.035em}
+.hero-end h2 em{color:var(--petrol)}
+.hero-end p{margin-top:18px;color:var(--muted)}
+
+/* ---------- Ticker ---------- */
+.ticker{background:var(--ink);color:var(--paper);overflow:hidden;position:relative;z-index:2}
+.ticker-track{display:flex;width:max-content;animation:tick 46s linear infinite}
+.ticker:hover .ticker-track{animation-play-state:paused}
+@keyframes tick{to{transform:translateX(-50%)}}
+.ticker-item{display:flex;align-items:center;gap:10px;padding:15px 26px;font:400 12px/1 var(--mono);letter-spacing:.05em;color:var(--muted-d);border-right:1px solid var(--line-d);white-space:nowrap}
+.ticker-item b{color:var(--paper);font-weight:500}
+.ticker-item s{text-decoration:none;color:var(--ink);background:var(--glow);padding:4px 7px;border-radius:5px;font-size:10px;text-transform:uppercase;letter-spacing:.08em}
+
+/* ---------- Sections ---------- */
+.sec{padding:clamp(72px,11vw,140px) 0}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,3fr);gap:24px;align-items:start;margin-bottom:clamp(36px,5vw,64px)}
+.kicker{display:flex;align-items:center;gap:10px;color:var(--muted);padding-top:14px}
+.kicker::before{content:"";width:22px;height:4px;background:var(--mark)}
+.h2{font:600 clamp(38px,5.6vw,76px)/1 var(--serif);letter-spacing:-.035em;text-wrap:balance}
+.lead{font-size:clamp(16px,1.5vw,18.5px);color:var(--muted);max-width:560px;margin-top:20px}
+
+.js .reveal{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease) var(--d,0s),transform .8s var(--ease) var(--d,0s)}
+.js .reveal.in{opacity:1;transform:none}
+
+/* Problema */
+.pain-grid{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--ink)}
+.pain{padding:26px 28px 34px 0;border-right:1px solid var(--line)}
+.pain+.pain{padding-left:28px}
+.pain:last-child{border-right:0;padding-right:0}
+.pain .n{color:var(--muted)}
+.pain h3{font:600 clamp(26px,2.6vw,34px)/1.08 var(--serif);letter-spacing:-.035em;margin:44px 0 12px}
+.pain p{color:var(--muted);max-width:330px}
+
+/* Como funciona */
+.how{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,6fr);gap:clamp(24px,5vw,72px);align-items:center}
+.step{display:grid;grid-template-columns:54px 1fr;padding:24px 0;border-top:1px solid var(--line);opacity:.45;transition:opacity .4s var(--ease)}
+.step:last-child{border-bottom:1px solid var(--line)}
+.step.on{opacity:1}
+.step .num{font:400 12px/1 var(--mono);letter-spacing:.07em;padding-top:8px;color:var(--muted)}
+.step h3{font:600 clamp(26px,2.5vw,32px)/1.1 var(--serif);letter-spacing:-.035em}
+.step p{color:var(--muted);margin-top:8px;max-width:420px}
+.step.on .num{color:var(--ink)}
+.term-frame{position:relative;padding:clamp(18px,3.4vw,44px);border-radius:var(--r);border:1px solid var(--line);overflow:hidden}
+.term-frame::before{content:"";position:absolute;inset:0;opacity:.5;background-image:radial-gradient(rgba(14,29,33,.22) 1px,transparent 1.2px);background-size:9px 9px}
+.term{position:relative;background:var(--ink);color:var(--paper);border-radius:14px;overflow:hidden;box-shadow:0 30px 60px -34px rgba(14,29,33,.75)}
+.term-bar{display:flex;align-items:center;gap:7px;padding:13px 16px;border-bottom:1px solid var(--line-d)}
+.term-bar i{width:9px;height:9px;border-radius:50%;background:rgba(239,230,215,.22)}
+.term-bar span{margin-left:8px;font:400 11.5px/1 var(--mono);color:var(--muted-d)}
+.term-body{padding:18px 18px 22px;font:400 13px/1.9 var(--mono);min-height:292px}
+.term-line{display:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;animation:lin .35s var(--ease)}
+.term-line.show{display:block}
+@keyframes lin{from{opacity:0;transform:translateY(5px)}}
+.term .t{color:var(--slate)}.term .ok{color:#8FD6B4}.term .hl{color:var(--glow)}.term .warn{color:#F0C36B}
+.caret{display:inline-block;width:8px;height:15px;background:var(--glow);vertical-align:-2px;animation:car 1s steps(1) infinite}
+@keyframes car{50%{opacity:0}}
+
+/* Recursos */
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.card{position:relative;background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;overflow:hidden;display:flex;flex-direction:column;min-height:230px;transition:transform .35s var(--ease),box-shadow .35s var(--ease),opacity .8s var(--ease) var(--d,0s)}
+@media (hover:hover){.card:hover{transform:translateY(-3px);box-shadow:0 22px 40px -30px rgba(14,29,33,.55)}}
+.c-2{grid-column:span 2}.c-3{grid-column:span 3}.c-4{grid-column:span 4}
+.card.dk{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.card.pt{background:var(--petrol);color:var(--paper);border-color:var(--petrol)}
+.card h3{font:600 clamp(24px,2.2vw,30px)/1.1 var(--serif);letter-spacing:-.035em;margin-top:auto;padding-top:28px}
+.card p{color:var(--muted);margin-top:8px;font-size:15px}
+.card.dk p,.card.pt p{color:var(--muted-d)}
+.card .tag{color:var(--muted)}.card.dk .tag{color:var(--muted-d)}
+.icon{width:42px;height:42px;border-radius:11px;display:grid;place-items:center;border:1px solid var(--line)}
+.card.pt .icon{border-color:var(--line-d)}
+.icon svg{width:20px;height:20px}
+.panel-card{flex-direction:row;gap:26px;min-height:340px;padding:28px}
+.panel-card .txt{flex:0 0 34%;display:flex;flex-direction:column}
+.panel{flex:1;position:relative;background:var(--deep);border:1px solid var(--line-d);border-radius:14px;padding:16px;font-size:13px;margin:0 -60px -60px 0}
+.panel-h{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;color:var(--muted-d)}
+.panel-h div{display:flex;align-items:center;gap:8px;color:var(--paper);font-weight:500}
+.panel-h img{width:20px;height:20px;border-radius:5px;border:1px solid var(--line-d)}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.stat{background:rgba(239,230,215,.05);border:1px solid var(--line-d);border-radius:10px;padding:11px 12px}
+.stat small{display:block;font:400 10px/1 var(--mono);letter-spacing:.07em;text-transform:uppercase;color:var(--muted-d)}
+.stat b{display:block;white-space:nowrap;font:600 clamp(16px,1.5vw,21px)/1.1 var(--serif);letter-spacing:-.02em;margin-top:9px;font-variant-numeric:tabular-nums}
+.stat em{font:400 10.5px/1 var(--mono);font-style:normal;color:#8FD6B4}
+.rows{margin-top:10px}
+.row{display:grid;grid-template-columns:62px 1fr auto;gap:10px;padding:10px 4px;border-top:1px solid var(--line-d);color:var(--muted-d)}
+.row .ty{font:400 10.5px/1.6 var(--mono);color:var(--glow)}
+.row .v{color:var(--paper);font-variant-numeric:tabular-nums}
+.toast{position:absolute;left:38px;bottom:74px;display:flex;gap:10px;align-items:center;background:var(--paper);color:var(--ink);padding:10px 14px 10px 10px;border-radius:12px;box-shadow:0 18px 40px -16px rgba(0,0,0,.6);animation:bob 5s ease-in-out infinite}
+.toast img{width:30px;height:30px;border-radius:8px}
+.toast b{display:block;font-size:13px;font-weight:600}
+.toast small{font:400 10.5px/1.3 var(--mono);color:var(--muted)}
+@keyframes bob{50%{transform:translateY(-7px)}}
+.zipviz{display:flex;gap:6px;margin-top:22px}
+.month{flex:1;text-align:center;padding:12px 0;border:1px solid var(--line);border-radius:10px;color:var(--muted)}
+.month.sel{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.pulse-bars{display:flex;align-items:flex-end;gap:5px;height:74px;margin-top:20px}
+.pulse-bars i{flex:1;height:var(--h);background:var(--glow);border-radius:3px;opacity:.85;transform-origin:50% 100%}
+.pulse-bars i.gap{background:#F0C36B;animation:car 1.2s steps(1) infinite}
+
+/* Contador */
+.acc-box{background:var(--ink);color:var(--paper);border-radius:calc(var(--r) + 8px);padding:clamp(28px,5.5vw,76px);display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:clamp(28px,5vw,72px);align-items:center;position:relative;overflow:hidden}
+.acc-box::before{content:"";position:absolute;inset:0;opacity:.35;background-image:radial-gradient(rgba(239,230,215,.2) 1px,transparent 1.2px);background-size:9px 9px;-webkit-mask-image:linear-gradient(120deg,transparent 45%,#000);mask-image:linear-gradient(120deg,transparent 45%,#000)}
+.acc-box>*{position:relative}
+.acc-box .kicker{color:var(--muted-d);padding:0;margin-bottom:22px}
+.acc-box .h2 em{color:var(--glow)}
+.acc-box .lead{color:var(--muted-d)}
+.checks{margin-top:30px;border-top:1px solid var(--line-d)}
+.checks li{display:flex;gap:14px;padding:14px 0;border-bottom:1px solid var(--line-d);font-size:15.5px}
+.checks li::before{content:"";flex:none;width:18px;height:18px;margin-top:3px;border-radius:50%;background:var(--glow) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 18 18'%3E%3Cpath d='M5 9.3l2.6 2.6L13 6.5' fill='none' stroke='%230E1D21' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E")}
+.tree{background:var(--paper);color:var(--ink);border-radius:14px;padding:6px 20px 18px;font:400 12.5px/1 var(--mono);box-shadow:0 30px 60px -30px rgba(0,0,0,.7)}
+.tree-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 0;border-bottom:1px solid var(--line);margin-bottom:8px;color:var(--muted)}
+.tree-h b{display:flex;align-items:center;gap:8px;font-weight:500;color:var(--ink);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tree li{padding:8px 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tree .d1{padding-left:20px}.tree .d2{padding-left:40px}
+.tree .f{font-weight:500}.tree .c{color:var(--muted)}
+.pill{display:inline-block;padding:3px 7px;border-radius:5px;font-size:10px;letter-spacing:.05em;text-transform:uppercase;margin-left:6px}
+.pill.x{background:#F3DDA6}.pill.k{background:#EBC4BC}.pill.r{background:var(--sand)}
+
+/* Segurança */
+.sec-grid{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;background:var(--card)}
+.lock{padding:26px 24px 30px;border-right:1px solid var(--line)}
+.lock:last-child{border-right:0}
+.lock span{display:inline-block;padding:5px 9px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+.lock h3{font:600 26px/1.1 var(--serif);letter-spacing:-.035em;margin:54px 0 8px}
+.lock p{color:var(--muted);font-size:15px}
+
+/* Planos */
+.incl{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 40px}
+.incl span{padding:8px 14px;border:1px solid var(--line);border-radius:999px;font-size:13.5px;background:var(--card)}
+.plan-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.plan{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:26px;display:flex;flex-direction:column}
+.plan-top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);min-height:26px}
+.badge{background:var(--glow);color:var(--ink);padding:5px 9px;border-radius:999px}
+.yrs{font:600 clamp(96px,11vw,150px)/.9 var(--serif);letter-spacing:-.035em;margin:26px 0 18px;display:flex;align-items:baseline;gap:10px}
+.yrs small{font:600 26px/1 var(--serif);letter-spacing:0;font-style:normal;color:var(--muted)}
+.plan p{color:var(--muted);font-size:15px;max-width:300px}
+.price{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:auto;padding-top:22px;border-top:1px solid var(--line);color:var(--muted)}
+.plan p+.price{margin-top:30px}
+.plan.rec{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.plan.rec .plan-top,.plan.rec p,.plan.rec .price,.plan.rec .yrs small{color:var(--muted-d)}
+.plan.rec .price{border-color:var(--line-d)}
+
+/* FAQ */
+.faq-grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:clamp(24px,5vw,72px)}
+.faq-grid .kicker{padding:0;margin-bottom:22px}
+.qs{border-top:1px solid var(--ink)}
+details{border-bottom:1px solid var(--line)}
+summary{list-style:none;cursor:pointer;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 0;font:600 clamp(21px,2vw,26px)/1.2 var(--serif);letter-spacing:-.035em}
+summary::-webkit-details-marker{display:none}
+summary i{flex:none;width:30px;height:30px;border:1px solid var(--line);border-radius:50%;position:relative;transition:background .25s,transform .35s var(--ease)}
+summary i::before,summary i::after{content:"";position:absolute;left:9px;right:9px;top:50%;height:1.5px;margin-top:-.75px;background:currentColor}
+summary i::after{transform:rotate(90deg);transition:transform .35s var(--ease)}
+details[open] summary i{background:var(--ink);color:var(--paper)}
+details[open] summary i::after{transform:rotate(0)}
+.ans{color:var(--muted);padding:0 50px 24px 0;max-width:600px}
+
+/* CTA */
+.cta{padding:0 0 clamp(40px,6vw,72px)}
+.cta-box{position:relative;border-radius:calc(var(--r) + 8px);overflow:hidden;background:var(--ink);color:var(--paper);min-height:clamp(380px,48vw,540px);display:flex;align-items:flex-end}
+.eyes{position:absolute;inset:0;background:url(assets/wolf-eyes.jpg) center top/cover}
+.eyes::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(14,29,33,.25),rgba(14,29,33,.2) 40%,rgba(14,29,33,.92))}
+.cta-in{position:relative;width:100%;display:flex;justify-content:space-between;align-items:flex-end;gap:28px;flex-wrap:wrap;padding:clamp(24px,4.5vw,56px)}
+.cta-in h2{font:600 clamp(48px,8vw,116px)/.92 var(--serif);letter-spacing:-.035em}
+.cta-in p{color:rgba(239,230,215,.82);max-width:300px;margin-bottom:18px}
+
+footer{padding:26px 0 34px}
+.foot{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding-top:24px;border-top:1px solid var(--line)}
+.foot nav{display:flex;gap:22px;font-size:14px;color:var(--muted)}
+.foot nav a:hover{color:var(--ink)}
+.foot>span{color:var(--muted)}
+
+.to-top{position:fixed;right:18px;bottom:18px;z-index:40;width:44px;height:44px;border-radius:50%;background:var(--ink);color:var(--paper);display:grid;place-items:center;opacity:0;pointer-events:none;transform:translateY(10px);transition:opacity .3s,transform .3s var(--ease)}
+.to-top.show{opacity:1;pointer-events:auto;transform:none}
+.to-top svg{width:18px;height:18px}
+
+/* ---------- Responsive ---------- */
+@media (max-width:1040px){
+  .hud{display:none}
+  .bento{grid-template-columns:repeat(2,1fr)}
+  .c-2,.c-3{grid-column:span 1}.c-4{grid-column:span 2}
+  .sec-grid{grid-template-columns:repeat(2,1fr)}
+  .lock:nth-child(2){border-right:0}.lock:nth-child(-n+2){border-bottom:1px solid var(--line)}
+}
+@media (max-width:860px){
+  .links{position:absolute;left:var(--gut);right:var(--gut);top:72px;flex-direction:column;gap:0;padding:8px;background:var(--card);border:1px solid var(--line);border-radius:18px;box-shadow:0 24px 50px -24px rgba(14,29,33,.5);opacity:0;transform:translateY(-8px);pointer-events:none;transition:opacity .25s,transform .25s var(--ease)}
+  .nav.open .links{opacity:1;transform:none;pointer-events:auto}
+  .links a{padding:15px 14px;font-size:12.5px}
+  .menu-btn{display:block}
+  .nav-in{background:rgba(248,242,231,.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border-color:var(--line)}
+  .sec-head,.how,.acc-box,.faq-grid{grid-template-columns:minmax(0,1fr)}
+  .sec-head{gap:14px}.kicker{padding-top:0}
+  .pain-grid{grid-template-columns:1fr}
+  .pain,.pain+.pain{padding:22px 0 26px;border-right:0;border-bottom:1px solid var(--line)}
+  .pain h3{margin-top:18px}
+  .plan-grid{grid-template-columns:1fr}
+  .panel-card{flex-direction:column}
+  .panel-card .txt{flex:none}
+  .panel{margin:0 -40px -50px 0}
+  .toast{left:auto;right:56px;bottom:66px}
+}
+@media (max-width:640px){
+  .hero{height:230vh}
+  .wolf{width:168vw;bottom:0}
+  .h1,.hero-end h2{font-size:min(15.5vw,9.4vh)}
+  .hero-copy,.hero-end{padding-top:96px}
+  .hero-ctas{flex-wrap:wrap}
+  .hero-note{position:static;max-width:none;text-align:center;margin-top:18px;font-size:10.5px}
+  .hero-note b,.scroll-cue,.side-dots,.corner{display:none}
+  .bento{grid-template-columns:1fr}.c-4{grid-column:span 1}
+  .card{min-height:0}
+  .sec-grid{grid-template-columns:1fr}
+  .lock{border-right:0;border-bottom:1px solid var(--line)}.lock:last-child{border-bottom:0}
+  .lock h3{margin-top:26px}
+  .ans{padding-right:0}
+  .foot{flex-direction:column;align-items:flex-start}
+  .btn{-webkit-tap-highlight-color:transparent}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .hero{height:auto}.stage{position:relative}
+  .js .reveal{opacity:1;transform:none}
+  .hero-end{display:none}
+}
+</style>
+</head>
+<body id="topo">
+
+<header class="nav" id="nav">
+  <div class="nav-in">
+    <a class="brand" href="#topo" aria-label="Hunter, por Devmais">
+      <img src="assets/hunter.svg" alt="" width="30" height="30">
+      <span>Hunter<small>por Devmais</small></span>
+    </a>
+    <nav class="links" id="links" aria-label="Seções">
+      <a href="#como-funciona">Como funciona</a>
+      <a href="#recursos">Recursos</a>
+      <a href="#contador">Para o contador</a>
+      <a href="#planos">Planos</a>
+      <a href="#duvidas">Dúvidas</a>
+    </nav>
+    <div class="nav-r">
+      <a class="btn btn-sm btn-ink" href="/login/">Entrar</a>
+      <button class="menu-btn" id="menuBtn" aria-label="Abrir menu" aria-expanded="false"><i></i></button>
+    </div>
+  </div>
+</header>
+
+<main>
+<!-- HERO -->
+<section class="hero" id="hero" aria-label="Apresentação">
+  <div class="stage" id="stage">
+    <div class="side-dots dots l" aria-hidden="true"></div>
+    <div class="side-dots dots r" aria-hidden="true"></div>
+
+    <div class="wolf" aria-hidden="true">
+      <video id="wolfVid" src="assets/wolf.mp4" poster="assets/wolf-poster.jpg" muted playsinline preload="auto" disablepictureinpicture></video>
+    </div>
+
+    <span class="corner tl"></span><span class="corner tr"></span><span class="corner bl"></span><span class="corner br"></span>
+
+    <div class="hero-copy">
+      <div class="eyebrow mono"><i></i>XML fiscal para redes de restaurantes</div>
+      <h1 class="h1">O caçador de XMLs<br><em>da sua rede.</em></h1>
+      <p class="hero-sub">Ele busca sozinho as NFC-e e NF-e de cada loja, guarda tudo com segurança e deixa o mês pronto para você e seu contador.</p>
+      <div class="hero-ctas">
+        <a class="btn btn-ink" href="https://devmais.com">Quero conhecer <span class="arr">→</span></a>
+        <a class="btn btn-line" href="/login/">Já sou cliente</a>
+      </div>
+      <p class="hero-note mono"><b></b>Sem pen drive, sem e-mail, sem “manda o XML aí”.</p>
+    </div>
+
+    <div class="hud a"><b>A cada 2h</b><span>coleta automática</span></div>
+    <div class="hud b"><b>NFC-e · NF-e</b><span>cancelamentos inclusos</span></div>
+    <div class="hud c"><b>Até 5 anos</b><span>guarda segura</span></div>
+
+    <div class="scroll-cue mono" aria-hidden="true">Role <i></i></div>
+
+    <div class="hero-end" aria-hidden="true">
+      <h2>Nenhuma nota<br><em>escapa.</em></h2>
+      <p class="mono">Instala em 2 cliques · Coleta a cada 2 horas · Guarda por até 5 anos</p>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker" aria-label="Exemplos de XMLs coletados">
+  <div class="ticker-track" id="ticker"></div>
+</div>
+
+<!-- PROBLEMA -->
+<section class="sec">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker mono reveal">O problema</p>
+      <h2 class="h2 reveal">Todo mês, a mesma <em>caçada.</em></h2>
+    </div>
+    <div class="pain-grid">
+      <article class="pain reveal" style="--d:.05s"><span class="n mono">01</span><h3>“Cadê os XMLs?”</h3><p>O contador pede, alguém sai procurando computador por computador, e sempre falta uma nota.</p></article>
+      <article class="pain reveal" style="--d:.15s"><span class="n mono">02</span><h3>Cada loja num canto</h3><p>Cada PDV salva numa pasta diferente. Ninguém enxerga a rede inteira de uma vez.</p></article>
+      <article class="pain reveal" style="--d:.25s"><span class="n mono">03</span><h3>Contingência esquecida</h3><p>Uma nota emitida offline que nunca foi transmitida vira problema fiscal lá na frente.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="sec" id="como-funciona" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker mono reveal">Como funciona</p>
+      <h2 class="h2 reveal">Instalou, esqueceu. <em>O Hunter caça.</em></h2>
+    </div>
+    <div class="how">
+      <ol class="steps" id="steps">
+        <li class="step on reveal"><span class="num">01</span><div><h3>Instale o coletor</h3><p>Baixe no painel o instalador já configurado da loja e dê dois cliques no computador do caixa.</p></div></li>
+        <li class="step reveal" style="--d:.08s"><span class="num">02</span><div><h3>Ele caça os XMLs</h3><p>A cada 2 horas, coleta NFC-e, NF-e, cancelamentos e inutilizações e envia para o Hunter. Sem internet? Envia quando a conexão voltar.</p></div></li>
+        <li class="step reveal" style="--d:.16s"><span class="num">03</span><div><h3>Você baixa o mês</h3><p>Escolha “Mês anterior” e baixe tudo em um ZIP, separado por loja e por mês.</p></div></li>
+      </ol>
+      <div class="term-frame reveal" style="--d:.1s" aria-hidden="true">
+        <div class="term">
+          <div class="term-bar"><i></i><i></i><i></i><span>hunter-coletor · Loja Centro</span></div>
+          <div class="term-body" id="term"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- RECURSOS -->
+<section class="sec" id="recursos" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker mono reveal">Recursos</p>
+      <h2 class="h2 reveal">Tudo para a sua rede <em>não perder nenhuma nota.</em></h2>
+    </div>
+
+    <div class="bento">
+      <article class="card dk panel-card c-4 reveal">
+        <div class="txt">
+          <span class="tag mono">A rede num painel</span>
+          <h3>Faturamento, notas e cancelamentos de cada loja</h3>
+        </div>
+        <div class="panel" aria-hidden="true">
+          <div class="panel-h"><div><img src="assets/hunter.svg" alt="">Hunter · Painel</div><span class="mono">Hoje</span></div>
+          <div class="stats">
+            <div class="stat"><small>Faturamento</small><b data-count="48392" data-prefix="R$ ">R$ 48.392</b><em>+12%</em></div>
+            <div class="stat"><small>Notas</small><b data-count="1284">1.284</b><em>+8%</em></div>
+            <div class="stat"><small>Lojas online</small><b>6/6</b><em>agora</em></div>
+          </div>
+          <div class="rows">
+            <div class="row"><span class="ty">NFC-e</span><span>Loja Centro</span><span class="v">R$ 87,40</span></div>
+            <div class="row"><span class="ty">NFC-e</span><span>Loja Shopping</span><span class="v">R$ 132,90</span></div>
+            <div class="row"><span class="ty">NF-e</span><span>Loja Centro</span><span class="v">R$ 3.450,00</span></div>
+          </div>
+          <div class="toast"><img src="assets/hunter.svg" alt=""><div><b>XML caçado</b><small>NFC-e 1.234 · Loja Centro · agora</small></div></div>
+        </div>
+      </article>
+
+      <article class="card c-2 reveal" style="--d:.1s">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 3v12m0 0l-4-4m4 4l4-4M4 17v2a2 2 0 002 2h12a2 2 0 002-2v-2" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <h3>ZIP do mês</h3>
+        <p>Um clique e você tem todos os XMLs do período.</p>
+        <div class="zipviz" aria-hidden="true"><span class="month mono">Set</span><span class="month sel mono">Out</span><span class="month mono">Nov</span></div>
+      </article>
+
+      <article class="card c-2 reveal">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 12a8 8 0 0114-5.3M20 12a8 8 0 01-14 5.3M18 3v4h-4M6 21v-4h4" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <h3>Coleta automática</h3>
+        <p>Roda sozinho a cada 2 horas e na inicialização do Windows.</p>
+      </article>
+
+      <article class="card pt c-2 reveal" style="--d:.08s">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 8v5m0 3.5v.01M10.3 3.9L2.6 17.5A2 2 0 004.3 20.5h15.4a2 2 0 001.7-3L13.7 3.9a2 2 0 00-3.4 0z" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        <h3>Contingência vigiada</h3>
+        <p>Alerta para notas offline sem autorização há mais de 24h.</p>
+      </article>
+
+      <article class="card dk c-2 reveal" style="--d:.16s">
+        <span class="tag mono">Loja sem sinal</span>
+        <div class="pulse-bars" aria-hidden="true">
+          <i style="--h:60%"></i><i style="--h:72%"></i><i style="--h:55%"></i><i style="--h:80%"></i><i style="--h:66%"></i><i class="gap" style="--h:14%"></i><i class="gap" style="--h:14%"></i><i style="--h:70%"></i><i style="--h:62%"></i><i style="--h:84%"></i>
+        </div>
+        <h3>Você sabe na hora</h3>
+        <p>quando um coletor para de enviar.</p>
+      </article>
+
+      <article class="card c-3 reveal">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="8.5"/><path d="M8.5 15.5l7-7" stroke-linecap="round"/></svg></span>
+        <h3>Cancelamentos</h3>
+        <p>Guardados e retirados do faturamento automaticamente.</p>
+      </article>
+
+      <article class="card c-3 reveal" style="--d:.1s">
+        <span class="icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20a6.5 6.5 0 0113 0M16 4.5a3.5 3.5 0 010 7M21.5 20a6.5 6.5 0 00-4-6" stroke-linecap="round"/></svg></span>
+        <h3>Equipe com permissão</h3>
+        <p>Cada pessoa vê só as lojas que pode ver. O contador tem login próprio, só de leitura.</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- CONTADOR -->
+<section class="sec" id="contador" style="padding-top:0">
+  <div class="wrap">
+    <div class="acc-box">
+      <div>
+        <p class="kicker mono reveal">Para o contador</p>
+        <h2 class="h2 reveal">Seu contador vai <em>agradecer.</em></h2>
+        <p class="lead reveal">Nada de planilha de controle nem de cobrar loja por loja. Ele entra, escolhe o mês e baixa tudo organizado.</p>
+        <ul class="checks">
+          <li class="reveal">Pastas por loja e CNPJ, separadas por mês</li>
+          <li class="reveal" style="--d:.06s">Cancelamentos e inutilizações identificados</li>
+          <li class="reveal" style="--d:.12s">Notas em contingência marcadas até chegar a autorização</li>
+          <li class="reveal" style="--d:.18s">Acesso somente leitura, só às lojas que você escolher</li>
+        </ul>
+      </div>
+      <div class="tree reveal" style="--d:.1s" aria-hidden="true">
+        <div class="tree-h"><b><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>hunter-xmls-2026-10.zip</b><span>2.418 arquivos</span></div>
+        <ul>
+          <li>▾ <span class="f">Centro</span> <span class="c">· 11.222.333/0001-81</span></li>
+          <li class="d1">▾ <span class="f">NFC-e</span></li>
+          <li class="d2"><span class="c">35261011222333000181650010000012341.xml</span></li>
+          <li class="d2"><span class="c">352610112223330001816500100000123.xml</span><span class="pill x">conting.</span></li>
+          <li class="d2"><span class="c">352610112223330001816500100000124.xml</span><span class="pill k">cancel.</span></li>
+          <li class="d1">▸ <span class="f">NF-e</span></li>
+          <li class="d1">▸ <span class="f">Inutilizações</span></li>
+          <li>▾ <span class="f">Shopping</span> <span class="c">· 11.222.333/0002-62</span></li>
+          <li class="d1">▸ <span class="f">NFC-e</span><span class="pill r">1.093</span></li>
+          <li class="d1">▸ <span class="f">NF-e</span><span class="pill r">12</span></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SEGURANÇA -->
+<section class="sec" id="seguranca" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="kicker mono reveal">Segurança</p>
+      <h2 class="h2 reveal">Cada cliente só vê <em>o que é dele.</em></h2>
+    </div>
+    <div class="sec-grid reveal">
+      <div class="lock"><span class="mono">CNPJ</span><h3>Conferido em cada XML</h3><p>Uma loja não consegue enviar nota em nome de outra.</p></div>
+      <div class="lock"><span class="mono">SEFAZ</span><h3>Arquivo original</h3><p>Guardado exatamente como foi emitido.</p></div>
+      <div class="lock"><span class="mono">Chave</span><h3>Acesso por loja</h3><p>Cada loja tem sua própria chave, que pode ser trocada quando quiser.</p></div>
+      <div class="lock"><span class="mono">Isolamento</span><h3>Dados separados</h3><p>As informações de cada cliente ficam isoladas das dos outros.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PLANOS -->
+<section class="sec" id="planos" style="padding-top:0">
+  <div class="wrap">
+    <div class="sec-head" style="margin-bottom:0">
+      <p class="kicker mono reveal">Planos</p>
+      <div>
+        <h2 class="h2 reveal">Você escolhe por quanto tempo <em>guardar.</em></h2>
+        <p class="lead reveal">Cobrado por loja. Todo plano inclui:</p>
+        <div class="incl reveal"><span>Coleta automática</span><span>Painel da rede</span><span>ZIP do mês</span><span>Acesso do contador</span></div>
+      </div>
+    </div>
+    <div class="plan-grid">
+      <article class="plan reveal">
+        <div class="plan-top mono"><span>Guarda</span></div>
+        <div class="yrs">1<small>ano</small></div>
+        <p>Para quem já arquiva em outro lugar e quer praticidade no dia a dia.</p>
+        <div class="price"><span class="mono">Sob consulta</span><a class="btn btn-sm btn-line" href="https://devmais.com">Consultar <span class="arr">→</span></a></div>
+      </article>
+      <article class="plan reveal" style="--d:.08s">
+        <div class="plan-top mono"><span>Guarda</span></div>
+        <div class="yrs">3<small>anos</small></div>
+        <p>Histórico confortável para conferências e auditorias internas.</p>
+        <div class="price"><span class="mono">Sob consulta</span><a class="btn btn-sm btn-line" href="https://devmais.com">Consultar <span class="arr">→</span></a></div>
+      </article>
+      <article class="plan rec reveal" style="--d:.16s">
+        <div class="plan-top mono"><span>Guarda</span><span class="badge mono">Recomendado</span></div>
+        <div class="yrs">5<small>anos</small></div>
+        <p>Cobre o prazo de guarda dos documentos fiscais exigido pela legislação.</p>
+        <div class="price"><span class="mono">Sob consulta</span><a class="btn btn-sm btn-glow" href="https://devmais.com">Consultar <span class="arr">→</span></a></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="sec" id="duvidas" style="padding-top:0">
+  <div class="wrap faq-grid">
+    <div>
+      <p class="kicker mono reveal">Dúvidas</p>
+      <h2 class="h2 reveal">Perguntas <em>frequentes.</em></h2>
+    </div>
+    <div class="qs reveal">
+      <details open><summary>Preciso deixar algum programa aberto?<i></i></summary><p class="ans">Não. O coletor roda pelo Agendador de Tarefas do Windows a cada 2 horas e na inicialização, envia o que encontrou e fecha.</p></details>
+      <details><summary>E se a internet da loja cair?<i></i></summary><p class="ans">Nada se perde. Os XMLs continuam na pasta do sistema e o coletor envia tudo quando a conexão voltar.</p></details>
+      <details><summary>Funciona com o meu sistema de PDV?<i></i></summary><p class="ans">Sim, com qualquer sistema que salve os XMLs numa pasta do Windows. Você informa a pasta no painel.</p></details>
+      <details><summary>O que acontece com notas emitidas em contingência?<i></i></summary><p class="ans">Elas aparecem marcadas como “em contingência”. Quando a versão autorizada chega, o Hunter atualiza sozinho. Depois de 24h sem autorização, o painel avisa.</p></details>
+      <details><summary>Meu contador precisa de acesso?<i></i></summary><p class="ans">Ele pode ter um login próprio, só de leitura e limitado às lojas que você escolher. Ou você baixa o ZIP do mês e envia.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="wrap">
+    <div class="cta-box reveal">
+      <div class="eyes" aria-hidden="true"></div>
+      <div class="cta-in">
+        <h2>Pare de caçar XML.</h2>
+        <div>
+          <p>Deixe o Hunter fazer isso. Fale com a Devmais e coloque sua rede no ar.</p>
+          <a class="btn btn-glow" href="https://devmais.com">Quero conhecer <span class="arr">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <a class="brand" href="#topo"><img src="assets/hunter.svg" alt="" width="30" height="30"><span>Hunter<small>por Devmais</small></span></a>
+    <nav aria-label="Rodapé">
+      <a href="https://devmais.com">Devmais</a>
+      <a href="https://suportemais.com">Suporte+</a>
+      <a href="/login/">Área do cliente</a>
+    </nav>
+    <span class="mono">© 2026 Devmais</span>
+  </div>
+</footer>
+
+<a class="to-top" id="toTop" href="#topo" aria-label="Voltar ao topo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg></a>
+
+<script src="https://cdn.jsdelivr.net/npm/animejs@4.0.0/lib/anime.umd.min.js" defer></script>
+<script>
+window.addEventListener('DOMContentLoaded', () => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const A = window.anime;               // Anime.js v4 (carregado acima); se o CDN falhar, o site segue só com CSS
+  const hasA = !!A && !reduce;
+  const $ = id => document.getElementById(id);
+  const nav = $('nav'), toTop = $('toTop'), hero = $('hero'), stage = $('stage'), vid = $('wolfVid');
+  const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v));
+  const seg = (p, a, b) => clamp((p - a) / (b - a));
+  const set = (k, v) => stage.style.setProperty(k, v.toFixed(3));
+
+  toTop.addEventListener('click', e => {
+    e.preventDefault();
+    scrollTo({ top: 0, behavior: reduce ? 'auto' : 'smooth' });
+  });
+
+  /* --- Hero: a rolagem controla o avanço do lobo --- */
+  let current = 0, ready = false, lastP = -1;
+  vid.addEventListener('loadedmetadata', () => { ready = true; });
+  if (vid.readyState >= 1) ready = true;
+  vid.play().then(() => vid.pause()).catch(() => {}); // iOS só permite seek depois de um play
+
+  // Só recalcula o vídeo enquanto a hero está na tela (economiza CPU na rolagem do resto da página)
+  let heroVisible = true;
+  new IntersectionObserver(([e]) => { heroVisible = e.isIntersecting; }).observe(hero);
+
+  function frame() {
+    if (!heroVisible) {
+      nav.classList.toggle('stuck', scrollY > 24);
+      toTop.classList.toggle('show', scrollY > hero.offsetHeight);
+      requestAnimationFrame(frame);
+      return;
+    }
+    const total = hero.offsetHeight - innerHeight;
+    const p = reduce || total <= 0 ? 0 : clamp(-hero.getBoundingClientRect().top / total);
+    if (p !== lastP) {
+      lastP = p;
+      set('--copy', 1 - seg(p, .04, .24));
+      set('--zoom', 1 + seg(p, 0, 1) * .1);
+      set('--h1', seg(p, .30, .40));
+      set('--h2', seg(p, .38, .48));
+      set('--h3', seg(p, .46, .56));
+      set('--end', seg(p, .66, .84));
+    }
+    if (ready && vid.duration && !reduce) {
+      const target = seg(p, .02, .8);
+      current += (target - current) * .16;
+      const t = current * vid.duration * .84; // para antes de as orelhas saírem do quadro
+      if (Math.abs(vid.currentTime - t) > .008) vid.currentTime = t;
+    }
+    nav.classList.toggle('stuck', scrollY > 24);
+    toTop.classList.toggle('show', scrollY > hero.offsetHeight);
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+
+  /* --- Menu mobile --- */
+  const mb = $('menuBtn');
+  const closeMenu = () => { nav.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); };
+  mb.addEventListener('click', () => mb.setAttribute('aria-expanded', nav.classList.toggle('open')));
+  document.querySelectorAll('#links a').forEach(a => a.addEventListener('click', e => {
+    e.preventDefault();
+    closeMenu();
+    document.querySelector(a.getAttribute('href')).scrollIntoView({ behavior: reduce ? 'auto' : 'smooth' });
+  }));
+  addEventListener('keydown', e => { if (e.key === 'Escape') closeMenu(); });
+
+  /* --- Ticker --- */
+  const items = [
+    ['NFC-e 1.234', 'Loja Centro', 'R$ 87,40'], ['NFC-e 0.881', 'Loja Shopping', 'R$ 132,90'],
+    ['NF-e 0.212', 'Loja Centro', 'R$ 3.450,00'], ['NFC-e 2.019', 'Loja Paulista', 'R$ 64,00'],
+    ['Cancelamento', 'Loja Moema', 'R$ 41,50'], ['NFC-e 0.557', 'Loja Pinheiros', 'R$ 219,80'],
+    ['Inutilização', 'Loja Centro', 'nº 1.240'], ['NFC-e 3.102', 'Loja Shopping', 'R$ 58,30']
+  ];
+  const html = items.map(([a, b, c]) =>
+    `<span class="ticker-item"><b>${a}</b>${b} · ${c}<s>caçado</s></span>`).join('');
+  $('ticker').innerHTML = html + html;
+
+  /* --- AnimateOnScroll: mesmo modelo da diretiva do PrimeVue (enterClass / leaveClass / once) --- */
+  const animateOnScroll = (el, { enterClass = 'in', leaveClass = '', once = true, threshold = .12, onEnter } = {}) => {
+    const io = new IntersectionObserver(([e]) => {
+      if (e.isIntersecting) {
+        el.classList.add(enterClass); if (leaveClass) el.classList.remove(leaveClass);
+        onEnter && onEnter(el);
+        if (once) io.disconnect();
+      } else if (!once) {
+        el.classList.remove(enterClass); if (leaveClass) el.classList.add(leaveClass);
+      }
+    }, { threshold, rootMargin: '0px 0px -40px 0px' });
+    io.observe(el);
+  };
+  document.querySelectorAll('.reveal').forEach(el => animateOnScroll(el));
+
+  /* --- Terminal: log do coletor --- */
+  const lines = [
+    [0, '<span class="t">$</span> hunter-coletor --instalar'],
+    [0, '<span class="ok">✓</span> Loja Centro · CNPJ 11.222.333/0001-81'],
+    [0, '<span class="ok">✓</span> Agendado: a cada 2h e na inicialização'],
+    [1, '<span class="t">14:00</span> Procurando em C:\\PDV\\XML …'],
+    [1, '<span class="hl">→</span> 46 NFC-e · 2 NF-e · 1 cancelamento'],
+    [1, '<span class="warn">!</span> 1 nota em contingência · aguardando SEFAZ'],
+    [1, '<span class="ok">✓</span> 49 XMLs enviados ao Hunter'],
+    [2, '<span class="t">01/11</span> ZIP de outubro pronto · 2.418 arquivos'],
+    [2, '<span class="ok">✓</span> Contador notificado']
+  ];
+  const term = $('term');
+  term.innerHTML = lines.map(([s, l]) => `<div class="term-line" data-s="${s}">${l}</div>`).join('') + '<span class="caret"></span>';
+  const tl = [...term.querySelectorAll('.term-line')];
+  const steps = [...document.querySelectorAll('.step')];
+  let shown = 0, timer = null;
+  function runTerm() {
+    if (shown >= tl.length) {
+      timer = setTimeout(() => { tl.forEach(l => l.classList.remove('show')); shown = 0; runTerm(); }, 3200);
+      return;
+    }
+    const l = tl[shown++];
+    l.classList.add('show');
+    steps.forEach((st, i) => st.classList.toggle('on', i === +l.dataset.s));
+    timer = setTimeout(runTerm, 650);
+  }
+  if (reduce) { tl.forEach(l => l.classList.add('show')); steps.forEach(s => s.classList.add('on')); }
+  else new IntersectionObserver(es => { if (es[0].isIntersecting && !timer) runTerm(); }, { threshold: .4 }).observe(term);
+
+  /* --- Contagem nos números do painel (Anime.js) --- */
+  document.querySelectorAll('[data-count]').forEach(el => animateOnScroll(el, {
+    threshold: .6,
+    onEnter: () => {
+      if (!hasA) return;
+      const end = +el.dataset.count, pre = el.dataset.prefix || '', o = { v: 0 };
+      A.animate(o, { v: end, duration: 1400, ease: 'outExpo',
+        onUpdate: () => { el.textContent = pre + Math.round(o.v).toLocaleString('pt-BR'); } });
+    }
+  }));
+
+  if (hasA) {
+    /* --- Entrada da hero --- */
+    A.createTimeline({ defaults: { ease: 'outExpo', duration: 1100 } })
+      .add('.hero .eyebrow', { opacity: [0, 1], translateY: [14, 0], duration: 700 }, 200)
+      .add('.hero .h1', { opacity: [0, 1], translateY: [38, 0] }, '-=500')
+      .add('.hero .hero-sub', { opacity: [0, 1], translateY: [18, 0], duration: 800 }, '-=700')
+      .add('.hero .hero-ctas .btn', { opacity: [0, 1], translateY: [16, 0], delay: A.stagger(90), duration: 700 }, '-=600')
+      .add('.hero .corner', { opacity: [0, .45], scale: [1.6, 1], delay: A.stagger(70), duration: 900 }, 0);
+
+    /* --- Elementos com entrada em grupo, disparados ao aparecer --- */
+    const group = (sel, params, opts = {}) => document.querySelectorAll(sel).forEach(el =>
+      animateOnScroll(el, { threshold: .25, ...opts, onEnter: () => A.animate(el.querySelectorAll(opts.child || ':scope > *'), { ...params, delay: A.stagger(70) }) }));
+    group('.zipviz', { opacity: [0, 1], translateY: [12, 0], duration: 600, ease: 'outExpo' }, { child: '.month' });
+    group('.pulse-bars', { scaleY: [0, 1], duration: 900, ease: 'outExpo' }, { child: 'i' });
+    group('.tree', { opacity: [0, 1], translateX: [-10, 0], duration: 600, ease: 'outExpo' }, { child: 'li' });
+    group('.stats', { opacity: [0, 1], translateY: [14, 0], duration: 700, ease: 'outExpo' }, { child: '.stat' });
+
+    /* --- Interação: botões magnéticos e cartões com leve inclinação (só com mouse) --- */
+    if (matchMedia('(hover: hover)').matches) {
+      document.querySelectorAll('.btn').forEach(b => {
+        b.addEventListener('pointermove', e => {
+          const r = b.getBoundingClientRect();
+          A.animate(b, { translateX: (e.clientX - r.left - r.width / 2) * .2, translateY: (e.clientY - r.top - r.height / 2) * .3, duration: 400, ease: 'out(3)' });
+        });
+        b.addEventListener('pointerleave', () => A.animate(b, { translateX: 0, translateY: 0, duration: 800, ease: 'outElastic(1, .5)' }));
+      });
+      document.querySelectorAll('.card').forEach(c => {
+        c.addEventListener('pointermove', e => {
+          const r = c.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - .5, y = (e.clientY - r.top) / r.height - .5;
+          A.animate(c, { rotateY: x * 7, rotateX: -y * 7, translateY: -3, transformPerspective: 900, duration: 500, ease: 'out(3)' });
+        });
+        c.addEventListener('pointerleave', () => A.animate(c, { rotateX: 0, rotateY: 0, translateY: 0, duration: 800, ease: 'outElastic(1, .6)' }));
+      });
+    }
+  }
+});
+</script>
+</body>
+</html>
