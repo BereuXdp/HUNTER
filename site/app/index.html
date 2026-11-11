@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Painel · Hunter</title>
+<meta name="theme-color" content="#0E1D21">
+<link rel="icon" href="../assets/hunter.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>
+  // guarda de acesso (modo demo): sem sessão, volta pro login
+  try {
+    if (!sessionStorage.getItem('hunter.demo.session') && !localStorage.getItem('hunter.demo.session')) location.replace('../login/');
+  } catch (_) {}
+</script>
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="frame">
+  <aside class="rail" aria-label="Menu principal">
+    <a class="rail-logo" href="#/visao" aria-label="Hunter, visão geral"><img src="../assets/hunter.svg" alt=""><span>Hunter<small>por Devmais</small></span></a>
+    <nav class="rail-nav" id="menu"></nav>
+    <button class="rail-btn logout" id="logout" type="button" aria-label="Sair">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M15 4h3a2 2 0 012 2v12a2 2 0 01-2 2h-3M10 17l-5-5 5-5M5 12h11"/></svg><span class="lbl">Sair</span>
+    </button>
+  </aside>
+
+  <div class="panel">
+    <header class="top">
+      <img class="top-logo" src="../assets/hunter.svg" alt="Hunter">
+      <label class="gsearch">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.5-3.5"/></svg>
+        <input id="gsearch" type="search" placeholder="Buscar nota por número ou chave…" autocomplete="off" aria-label="Buscar nota">
+      </label>
+      <div class="top-right">
+        <a class="icon-btn" id="bell" href="#/alertas" aria-label="Alertas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 1112 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.9 1.9 0 003.4 0"/></svg>
+          <i class="dot" id="bellDot" hidden></i>
+        </a>
+        <div class="me">
+          <span class="avatar" id="meAvatar"></span>
+          <div class="me-txt"><b id="meNome"></b><small id="meRede"></small></div>
+        </div>
+      </div>
+    </header>
+
+    <div class="head">
+      <div class="head-txt"><h1 id="pageTitle">Visão geral</h1><p id="pageSub"></p></div>
+      <div class="head-tools" id="tools"></div>
+    </div>
+
+    <main class="view" id="view" tabindex="-1"></main>
+  </div>
+</div>
+
+<aside class="drawer" id="drawer" aria-hidden="true"></aside>
+<dialog class="modal" id="modal"></dialog>
+<div class="tip" id="tip" role="tooltip"></div>
+<div class="toasts" id="toasts" aria-live="polite"></div>
+
+<script src="../assets/vendor/anime.umd.min.js"></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

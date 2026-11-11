@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar · Hunter</title>
+<meta name="theme-color" content="#EDE4D3">
+<link rel="icon" href="../assets/hunter.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1D21; --petrol:#224347; --slate:#677E8A;
+  --panel:#EDE4D3; --field:#F6F0E5; --bg:#F9F6EC;
+  --line:rgba(14,29,33,.14);
+  --sans:"Geist",system-ui,-apple-system,Segoe UI,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+button,input{font:inherit;color:inherit}
+.mono{font:500 12px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+
+/* grain */
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:10;opacity:.06;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.page{position:relative;display:flow-root;min-height:100vh;min-height:100svh}
+
+/* wolf side */
+.art{position:fixed;inset:0;background:var(--bg)}
+.art img{position:absolute;top:0;right:0;height:100%;width:60%;object-fit:cover;object-position:50% 40%;transform-origin:50% 42%;
+  animation:breathe 14s ease-in-out infinite alternate}
+@keyframes breathe{from{transform:scale(1.42)}to{transform:scale(1.5)}}
+
+/* panel with big curved edge */
+.panel{position:relative;z-index:2;width:clamp(600px,48vw,920px);min-height:100vh;min-height:100svh;background:var(--panel);
+  border-radius:0 min(26vw,500px) min(26vw,500px) 0;
+  box-shadow:24px 0 60px -30px rgba(14,29,33,.35);
+  display:flex;flex-direction:column;padding:clamp(28px,6.3vh,68px) 0 clamp(24px,5vh,56px) clamp(40px,4.6vw,88px)}
+.top{display:flex;align-items:center;justify-content:space-between;padding-right:clamp(150px,10.5vw,200px)}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;letter-spacing:-.01em}
+.brand img{width:32px;height:32px}
+.brand small{display:block;font:500 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;opacity:.55;margin-top:4px}
+.back{text-decoration:none;color:#33474c;font-size:11px;transition:color .2s}
+.back:hover{color:var(--ink)}
+
+.form-wrap{margin:auto 0;padding:clamp(24px,5vh,56px) 0 clamp(20px,3.7vh,40px) clamp(0px,4.8vw,92px);width:calc(100% - 150px);max-width:572px}
+.badge{display:inline-flex;align-items:center;gap:10px;padding:12px 16px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.3);font-size:13px;color:#2d3e43}
+.badge i{width:7px;height:7px;border-radius:50%;background:var(--ink)}
+h1{font:650 clamp(44px,3.6vw,68px)/.98 var(--sans);letter-spacing:-.045em;margin:26px 0 22px}
+h1 span{color:var(--petrol)}
+.lead{color:#4a5a5f;font-size:19px;max-width:15.5em;line-height:1.6}
+
+form{margin-top:44px;max-width:480px}
+.f{margin-bottom:22px}
+.lab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;font-weight:500;font-size:17px}
+.lab a{font-weight:400;color:var(--petrol);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;cursor:pointer;background:none;border:0;font-size:17px}
+.lab a:hover{color:var(--ink)}
+.input{position:relative}
+input[type=text],input[type=email],input[type=password]{width:100%;height:62px;border-radius:16px;border:1px solid var(--line);background:var(--field);padding:0 20px;font-size:19px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+input::placeholder{color:#9aa2a3}
+input:focus{border-color:var(--petrol);background:#fff;box-shadow:0 0 0 4px rgba(34,67,71,.12)}
+.input input{padding-right:110px}
+.show{position:absolute;right:8px;top:50%;transform:translateY(-50%);height:44px;padding:0 14px;border:0;background:none;cursor:pointer;color:#3d4f54;border-radius:10px}
+.show:hover{background:rgba(14,29,33,.06)}
+.hint{display:none;margin-top:10px;font-size:14px;color:#4a5a5f;background:rgba(255,255,255,.45);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.hint.on{display:block;animation:fade .3s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}}
+
+.check{display:flex;align-items:center;gap:12px;color:#33474c;font-size:17px;cursor:pointer;margin:6px 0 32px;user-select:none}
+.check input{appearance:none;-webkit-appearance:none;width:24px;height:24px;border-radius:7px;border:1px solid rgba(14,29,33,.25);background:var(--field);display:grid;place-items:center;cursor:pointer;transition:background .2s,border-color .2s}
+.check input::after{content:"";width:10px;height:6px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translateY(-1px) scale(0);transition:transform .2s var(--ease)}
+.check input:checked{background:var(--ink);border-color:var(--ink)}
+.check input:checked::after{transform:rotate(-45deg) translateY(-1px) scale(1)}
+.check input:focus-visible{box-shadow:0 0 0 4px rgba(34,67,71,.18)}
+
+.submit{width:100%;height:66px;border-radius:999px;border:0;background:var(--ink);color:#F6F0E5;font-weight:600;font-size:19px;display:flex;align-items:center;justify-content:center;gap:14px;cursor:pointer;transition:background .25s,transform .2s var(--ease)}
+.submit:hover{background:var(--petrol)}
+.submit:active{transform:scale(.985)}
+.submit span{transition:transform .25s var(--ease)}
+.submit:hover span{transform:translateX(4px)}
+.submit[disabled]{opacity:.7;cursor:progress}
+
+.alt{margin-top:28px;color:#4a5a5f;font-size:17px}
+.alt a{color:var(--ink);font-weight:500;text-underline-offset:4px;text-decoration-thickness:1px}
+
+.foot{display:flex;justify-content:space-between;padding-right:clamp(150px,10.5vw,200px);color:#4a5a5f;font-size:11px}
+.foot a{text-decoration:none}
+.foot a:hover{color:var(--ink)}
+
+/* load-in */
+.rise{opacity:0;transform:translateY(14px);animation:rise .8s var(--ease) forwards;animation-delay:var(--d,0s)}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* ---------- responsive ---------- */
+/* shorter screens (notebooks): compress vertical rhythm so it fits */
+@media (min-width:901px) and (max-height:900px){
+  .badge{padding:9px 14px;font-size:12px}
+  h1{font-size:clamp(40px,6.4vh,60px);margin:18px 0 14px}
+  .lead{font-size:17px}
+  form{margin-top:28px}
+  .f{margin-bottom:16px}
+  .lab,.lab a,.check,.alt{font-size:16px}
+  .lab{margin-bottom:8px}
+  input[type=text],input[type=email],input[type=password]{height:52px;font-size:17px;border-radius:14px}
+  .check{margin:2px 0 22px}
+  .submit{height:56px;font-size:17px}
+  .alt{margin-top:20px}
+  .form-wrap{padding-top:16px;padding-bottom:16px}
+}
+@media (min-width:901px) and (max-height:720px){
+  .lead{display:none}
+  h1{margin-bottom:0}
+}
+@media (max-width:900px){
+  .art{position:absolute;top:0;left:0;right:0;bottom:auto;height:44vh;overflow:hidden}
+  .art img{width:100%;height:100%;object-position:50% 30%;transform-origin:50% 45%;animation:breathe-m 14s ease-in-out infinite alternate}
+  @keyframes breathe-m{from{transform:scale(1.08)}to{transform:scale(1.14)}}
+  .panel{width:100%;margin-top:34vh;min-height:auto;border-radius:32px 32px 0 0;padding:28px 20px 32px;box-shadow:0 -20px 50px -30px rgba(14,29,33,.35)}
+  .top{padding-right:0;position:absolute;top:-34vh;left:20px;right:20px;margin-top:20px}
+  .back{background:rgba(249,246,236,.8);padding:10px 12px;border-radius:999px;backdrop-filter:blur(8px)}
+  .form-wrap{padding:8px 0 24px;margin:0;max-width:none}
+  h1{font-size:44px;margin:20px 0 14px}
+  .lead{font-size:17px}
+  form{margin-top:30px;max-width:none}
+  .lab,.lab a,.check,.alt{font-size:16px}
+  input[type=text],input[type=email],input[type=password]{height:56px;font-size:16px}
+  .submit{height:58px;font-size:17px}
+  .foot{padding:24px 0 0;margin:0;gap:12px;flex-wrap:wrap}
+}
+@media (prefers-reduced-motion:reduce){
+  .art img,.rise{animation:none;opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="art" aria-hidden="true"><img src="../assets/login-wolf.webp" alt=""></div>
+
+  <main class="panel">
+    <div class="top rise">
+      <a class="brand" href="../" aria-label="Hunter, ir para o site">
+        <img src="../assets/hunter.svg" alt="">
+        <span>Hunter<small>por Devmais</small></span>
+      </a>
+      <a class="back mono" href="../">← Voltar ao site</a>
+    </div>
+
+    <div class="form-wrap">
+      <span class="badge mono rise" style="--d:.05s"><i></i>Área do cliente</span>
+      <h1 class="rise" style="--d:.1s">Entre na<br><span>sua rede.</span></h1>
+      <p class="lead rise" style="--d:.15s">As lojas, as notas e o ZIP do mês estão onde você deixou.</p>
+
+      <form method="post" action="" id="loginForm" class="rise" style="--d:.22s" novalidate>
+        <!-- Django: inserir {% csrf_token %} aqui -->
+        <div class="f">
+          <label class="lab" for="email">E-mail</label>
+          <input type="email" id="email" name="username" placeholder="voce@suaempresa.com.br" autocomplete="username" required>
+        </div>
+        <div class="f">
+          <div class="lab"><label for="password">Senha</label><a role="button" tabindex="0" id="forgot" aria-controls="hint" aria-expanded="false">Esqueci a senha</a></div>
+          <div class="input">
+            <input type="password" id="password" name="password" placeholder="Sua senha" autocomplete="current-password" required>
+            <button type="button" class="show mono" id="toggle" aria-label="Mostrar senha">Mostrar</button>
+          </div>
+          <p class="hint" id="hint" role="status">Fale com o administrador da sua empresa para redefinir a senha.</p>
+        </div>
+        <label class="check"><input type="checkbox" name="remember"> Manter conectado neste aparelho</label>
+        <button class="submit" type="submit">Entrar <span>→</span></button>
+      </form>
+
+      <p class="alt rise" style="--d:.3s">Ainda não é cliente? <a href="https://devmais.com">Quero conhecer</a></p>
+    </div>
+
+    <div class="foot mono rise" style="--d:.35s">
+      <span>Cada cliente só vê as suas lojas</span>
+      <a href="https://devmais.com">Devmais</a>
+    </div>
+  </main>
+</div>
+
+<script>
+const pw = document.getElementById('password'), tg = document.getElementById('toggle');
+tg.addEventListener('click', () => {
+  const show = pw.type === 'password';
+  pw.type = show ? 'text' : 'password';
+  tg.textContent = show ? 'Ocultar' : 'Mostrar';
+  tg.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+  pw.focus();
+});
+const fg = document.getElementById('forgot'), hint = document.getElementById('hint');
+const toggleHint = () => { const on = hint.classList.toggle('on'); fg.setAttribute('aria-expanded', on); };
+fg.addEventListener('click', toggleHint);
+fg.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleHint(); } });
+document.getElementById('loginForm').addEventListener('submit', e => {
+  const f = e.target;
+  if (!f.checkValidity()) { e.preventDefault(); f.reportValidity(); return; }
+  const b = f.querySelector('.submit'); b.disabled = true; b.firstChild.textContent = 'Entrando… ';
+});
+</script>
+</body>
+</html>

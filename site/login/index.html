@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Entrar · Hunter</title>
+<meta name="theme-color" content="#F9F6EC">
+<link rel="icon" href="../assets/hunter.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300..700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0E1D21; --petrol:#224347; --slate:#677E8A;
+  --bg:#F9F6EC; --field:rgba(255,255,255,.55);
+  --line:rgba(14,29,33,.14);
+  --sans:"Geist",system-ui,-apple-system,Segoe UI,sans-serif;
+  --mono:"Geist Mono",ui-monospace,Menlo,monospace;
+  --ease:cubic-bezier(.2,.7,.2,1);
+  --gut:clamp(20px,4.5vw,88px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--ink);font:400 16px/1.5 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+a{color:inherit}
+button,input{font:inherit;color:inherit}
+.mono{font:500 11px/1 var(--mono);letter-spacing:.12em;text-transform:uppercase}
+
+/* full-bleed photo */
+.bg{position:fixed;inset:0;overflow:hidden;background:var(--bg)}
+.bg img{width:100%;height:100%;object-fit:cover;object-position:50% 40%;transform-origin:50% 42%;animation:breathe 16s ease-in-out infinite alternate}
+@keyframes breathe{from{transform:scale(1.02)}to{transform:scale(1.08)}}
+/* soft wash on the left so the card area stays calm */
+.bg::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,rgba(249,246,236,.55) 0%,rgba(249,246,236,0) 38%)}
+body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:10;opacity:.06;mix-blend-mode:multiply;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+.page{position:relative;z-index:2;min-height:100vh;min-height:100svh;display:grid;grid-template-rows:auto 1fr auto;padding:clamp(24px,4.5vh,48px) var(--gut)}
+header,footer{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;font-weight:600;letter-spacing:-.01em}
+.brand img{width:32px;height:32px}
+.brand small{display:block;font:500 10px/1 var(--mono);letter-spacing:.1em;text-transform:uppercase;opacity:.55;margin-top:4px}
+.chip{text-decoration:none;padding:11px 16px;border-radius:999px;background:rgba(249,246,236,.6);border:1px solid rgba(255,255,255,.7);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:#2d3e43;transition:background .2s,color .2s}
+.chip:hover{background:rgba(255,255,255,.85);color:var(--ink)}
+footer{color:#3d4f54}
+footer a{text-decoration:none}
+footer a:hover{color:var(--ink)}
+
+main{display:flex;align-items:center;padding:clamp(20px,4vh,48px) 0}
+.card{width:min(460px,100%);padding:clamp(28px,4vh,44px) clamp(24px,2.6vw,44px);border-radius:30px;
+  background:rgba(249,246,236,.62);border:1px solid rgba(255,255,255,.75);
+  backdrop-filter:blur(22px) saturate(1.1);-webkit-backdrop-filter:blur(22px) saturate(1.1);
+  box-shadow:0 1px 0 rgba(255,255,255,.8) inset,0 40px 80px -40px rgba(14,29,33,.45)}
+
+.badge{display:inline-flex;align-items:center;gap:10px;padding:9px 14px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.4);color:#2d3e43}
+.badge i{width:7px;height:7px;border-radius:50%;background:var(--ink);box-shadow:0 0 0 0 rgba(14,29,33,.4);animation:ping 2.4s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 7px rgba(14,29,33,0)}}
+h1{font:650 clamp(38px,3.2vw,54px)/.98 var(--sans);letter-spacing:-.045em;margin:20px 0 12px}
+h1 span{color:var(--petrol)}
+.lead{color:#4a5a5f;font-size:16px;max-width:30ch}
+
+form{margin-top:clamp(20px,3.4vh,32px)}
+.f{margin-bottom:16px}
+.lab{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px;font-weight:500;font-size:15px}
+.lab a{font-weight:400;color:var(--petrol);text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1px;cursor:pointer;font-size:15px}
+.lab a:hover{color:var(--ink)}
+.input{position:relative}
+input[type=email],input[type=text],input[type=password]{width:100%;height:54px;border-radius:14px;border:1px solid var(--line);background:var(--field);padding:0 18px;font-size:16px;outline:none;transition:border-color .2s,box-shadow .2s,background .2s}
+input::placeholder{color:#8f989a}
+input:focus{border-color:var(--petrol);background:rgba(255,255,255,.92);box-shadow:0 0 0 4px rgba(34,67,71,.12)}
+.input input{padding-right:104px}
+.show{position:absolute;right:6px;top:50%;transform:translateY(-50%);height:42px;padding:0 14px;border:0;background:none;cursor:pointer;color:#3d4f54;border-radius:10px}
+.show:hover{background:rgba(14,29,33,.06)}
+.hint{display:none;margin-top:10px;font-size:14px;color:#4a5a5f;background:rgba(255,255,255,.5);border:1px solid var(--line);border-radius:12px;padding:10px 14px}
+.hint.on{display:block;animation:fade .3s var(--ease)}
+@keyframes fade{from{opacity:0;transform:translateY(-4px)}}
+
+.check{display:flex;align-items:center;gap:12px;color:#33474c;font-size:15px;cursor:pointer;margin:4px 0 22px;user-select:none}
+.check input{appearance:none;-webkit-appearance:none;flex:none;width:22px;height:22px;border-radius:7px;border:1px solid rgba(14,29,33,.25);background:var(--field);display:grid;place-items:center;cursor:pointer;transition:background .2s,border-color .2s}
+.check input::after{content:"";width:9px;height:5px;border:2px solid #fff;border-top:0;border-right:0;transform:rotate(-45deg) translateY(-1px) scale(0);transition:transform .2s var(--ease)}
+.check input:checked{background:var(--ink);border-color:var(--ink)}
+.check input:checked::after{transform:rotate(-45deg) translateY(-1px) scale(1)}
+.check input:focus-visible{box-shadow:0 0 0 4px rgba(34,67,71,.18)}
+
+.submit{width:100%;height:58px;border-radius:999px;border:0;background:var(--ink);color:#F6F0E5;font-weight:600;font-size:17px;display:flex;align-items:center;justify-content:center;gap:12px;cursor:pointer;transition:background .25s,transform .2s var(--ease),box-shadow .25s}
+.submit:hover{background:var(--petrol);box-shadow:0 12px 30px -12px rgba(14,29,33,.6)}
+.submit:active{transform:scale(.985)}
+.submit span{transition:transform .25s var(--ease)}
+.submit:hover span{transform:translateX(4px)}
+.submit[disabled]{opacity:.7;cursor:progress}
+.alt{margin-top:20px;color:#4a5a5f;font-size:15px;text-align:center}
+.alt a{color:var(--ink);font-weight:500;text-underline-offset:4px;text-decoration-thickness:1px}
+
+.rise{opacity:0;transform:translateY(14px);animation:rise .8s var(--ease) forwards;animation-delay:var(--d,0s)}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* short screens */
+@media (min-width:761px) and (max-height:860px){
+  .page{padding-top:20px;padding-bottom:20px}
+  main{padding:14px 0}
+  .card{padding:26px 32px}
+  h1{font-size:40px;margin:16px 0 8px}
+  .lead{font-size:15px}
+  form{margin-top:18px}
+  .f{margin-bottom:12px}
+  input[type=email],input[type=text],input[type=password]{height:48px}
+  .check{margin-bottom:16px}
+  .submit{height:52px}
+  .alt{margin-top:14px}
+}
+@media (min-width:761px) and (max-height:700px){
+  .lead{display:none}
+  h1{margin-bottom:0}
+}
+
+/* phones: wolf on top, card as a bottom sheet */
+@media (max-width:760px){
+  .bg{position:absolute;bottom:auto;height:56vh;-webkit-mask-image:linear-gradient(#000 70%,transparent);mask-image:linear-gradient(#000 70%,transparent)}
+  .bg img{object-position:50% 45%}
+  .bg::after{display:none}
+  .page{padding:18px 16px 20px}
+  main{align-items:flex-end;padding:38vh 0 20px}
+  .card{width:100%;border-radius:26px;padding:26px 20px}
+  h1{font-size:38px}
+  .lead{font-size:15px}
+  footer{justify-content:center;flex-wrap:wrap;gap:6px 16px;text-align:center}
+  .chip{padding:10px 12px}
+}
+@media (prefers-reduced-motion:reduce){
+  .bg img,.rise,.badge i{animation:none;opacity:1;transform:none}
+}
+</style>
+</head>
+<body>
+<div class="bg" aria-hidden="true"><img src="../assets/login-wolf.webp" alt=""></div>
+
+<div class="page">
+  <header class="rise">
+    <a class="brand" href="../" aria-label="Hunter, ir para o site">
+      <img src="../assets/hunter.svg" alt="">
+      <span>Hunter<small>por Devmais</small></span>
+    </a>
+    <a class="chip mono" href="../">← Voltar ao site</a>
+  </header>
+
+  <main>
+    <section class="card rise" style="--d:.08s" aria-labelledby="ttl">
+      <span class="badge mono"><i></i>Área do cliente</span>
+      <h1 id="ttl">Entre na<br><span>sua rede.</span></h1>
+      <p class="lead">As lojas, as notas e o ZIP do mês estão onde você deixou.</p>
+
+      <form method="post" action="" id="loginForm" novalidate>
+        <!-- Django: inserir {% csrf_token %} aqui -->
+        <div class="f">
+          <label class="lab" for="email">E-mail</label>
+          <input type="email" id="email" name="username" placeholder="voce@suaempresa.com.br" autocomplete="username" required>
+        </div>
+        <div class="f">
+          <div class="lab"><label for="password">Senha</label><a role="button" tabindex="0" id="forgot" aria-controls="hint" aria-expanded="false">Esqueci a senha</a></div>
+          <div class="input">
+            <input type="password" id="password" name="password" placeholder="Sua senha" autocomplete="current-password" required>
+            <button type="button" class="show mono" id="toggle" aria-label="Mostrar senha">Mostrar</button>
+          </div>
+          <p class="hint" id="hint" role="status">Fale com o administrador da sua empresa para redefinir a senha.</p>
+        </div>
+        <label class="check"><input type="checkbox" name="remember"> Manter conectado neste aparelho</label>
+        <button class="submit" type="submit">Entrar <span>→</span></button>
+      </form>
+
+      <p class="alt">Ainda não é cliente? <a href="https://devmais.com">Quero conhecer</a></p>
+    </section>
+  </main>
+
+  <footer class="mono rise" style="--d:.2s">
+    <span>Cada cliente só vê as suas lojas</span>
+    <a href="https://devmais.com">Devmais</a>
+  </footer>
+</div>
+
+<script>
+const pw = document.getElementById('password'), tg = document.getElementById('toggle');
+tg.addEventListener('click', () => {
+  const show = pw.type === 'password';
+  pw.type = show ? 'text' : 'password';
+  tg.textContent = show ? 'Ocultar' : 'Mostrar';
+  tg.setAttribute('aria-label', show ? 'Ocultar senha' : 'Mostrar senha');
+  pw.focus();
+});
+const fg = document.getElementById('forgot'), hint = document.getElementById('hint');
+const toggleHint = () => { const on = hint.classList.toggle('on'); fg.setAttribute('aria-expanded', on); };
+fg.addEventListener('click', toggleHint);
+fg.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggleHint(); } });
+/* MODO DEMO: sem backend, qualquer e-mail e senha entram no painel.
+   Quando ligar ao servidor, remova este bloco e deixe o form fazer o POST normal. */
+const DEMO = true;
+const SESSION_KEY = 'hunter.demo.session';
+document.getElementById('loginForm').addEventListener('submit', e => {
+  const f = e.target;
+  if (!f.checkValidity()) { e.preventDefault(); f.reportValidity(); return; }
+  const b = f.querySelector('.submit'); b.disabled = true; b.firstChild.textContent = 'Entrando… ';
+  if (!DEMO) return;
+  e.preventDefault();
+  const email = f.username.value.trim().toLowerCase();
+  const nome = email.split('@')[0].split(/[._-]+/).filter(Boolean)
+    .map(p => p[0].toUpperCase() + p.slice(1)).join(' ') || 'Cliente';
+  const session = JSON.stringify({ nome, email, papel: 'Administrador', rede: 'Rede Sabor & Cia', em: Date.now() });
+  try {
+    (f.remember.checked ? localStorage : sessionStorage).setItem(SESSION_KEY, session);
+  } catch (_) {}
+  setTimeout(() => location.assign('../app/'), 450);
+});
+/* já logado? vai direto pro painel */
+try {
+  if (DEMO && (sessionStorage.getItem(SESSION_KEY) || localStorage.getItem(SESSION_KEY))) location.replace('../app/');
+} catch (_) {}
+</script>
+</body>
+</html>
